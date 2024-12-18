@@ -1,8 +1,8 @@
 /* Make the body cover the full page without margins */
 html, body {
     margin: 0;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
 }
 
 /* Make the map fill the entire page */
@@ -17,17 +17,17 @@ html, body {
 /* Style for toggle buttons for showing/hiding layer panel */
 #hide-layer-panel, #show-layer-panel {
     position: absolute;
-    top: 1vh;
-    right: 1vw;
+    top: 10px;
+    right: 10px;
     cursor: pointer;
     background-color: white;
     color: black;
     border: 2px solid #355e3b;
-    padding: 0.5vh 1vw;
-    font-size: 1.5vw;
-    border-radius: 0.5vw;
-    width: 8vw;
-    height: 4vh;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    width: 70px;
+    height: 30px; 
     text-align: center;
     display: flex;
     justify-content: center;
@@ -36,49 +36,51 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
+/* Initially hide the 'show layer panel' button */
 #show-layer-panel {
     display: none;
 }
 
-/* Style for layer selection tabs */
 #layer-select-tabs {
     position: absolute;
-    top: 8vh;
-    right: 1vw;
-    width: 25vw;
-    max-height: calc(100vh - 10vh);
+    top: 66px;
+    right: 10px;
+    width: 200px;
+    height: 400px; /* Set fixed height */
     background-color: rgba(255, 255, 255, 0.8);
     border: 2px solid #355e3b;
     z-index: 1001;
-    overflow-y: auto;
-    border-radius: 1.2vw;
-    padding: 1vh 1vw;
+    overflow-y: auto; /* Enable scrolling */
+    border-radius: 12px;
+    padding: 10px;
 }
 
 #layer-select-tabs h3 {
-    margin: 1vh 0;
-    font-size: 1.5vw;
+    margin: 10px 0;
+    font-size: 16px;
     color: #355e3b;
 }
 
+/* Ensure buttons are part of the content that requires scrolling */
 #layer-select-tabs button {
     font-family: 'Comfortaa', sans-serif !important;
     display: block;
-    width: 22vw;
-    padding: 1vh 2vw;
-    margin: 1vh auto;
+    width: 180px;
+    padding: 12px 20px;
+    margin: 10px auto;
     background: #fff;
     border: 2px solid #355e3b;
-    border-radius: 0.8vw;
+    border-radius: 8px;
     text-align: center;
     cursor: pointer;
-    font-size: 1.2vw;
+    font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
 
+/* Animation effect for button hover */
 #layer-select-tabs button::after {
     content: '';
     position: absolute;
@@ -94,30 +96,35 @@ html, body {
     left: 100%;
 }
 
+/* Slight lift and shadow effect on hover */
 #layer-select-tabs button:hover {
-    transform: translateY(-0.2vh);
-    box-shadow: 0 0.2vh 0.8vh rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+/* No lift effect on active state */
 #layer-select-tabs button:active {
     transform: translateY(0);
 }
 
+/* Active button background and text colour */
 #layer-select-tabs button.active {
     background-color: #4CAF50;
     color: white;
 }
 
+/* Style for the train button*/
 #train-button {
     position: absolute;
-    bottom: 5vh;
-    left: 1vw;
+    bottom: 50px;
+    left: 10px;
     z-index: 1001;
-    width: 10vw;
-    height: 10vw;
-    background-color: #FFFF;
+    width: 80px;
+    height: 80px;
+    background-color: #FFFF; 
+    color: white;
     border: none; 
-    font-size: 3vw;
+    font-size: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -126,19 +133,21 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
+/* Change train button background when active */
 #train-button.active {
     background-color: #4CAF50;
 }
 
+/* Small text below the train button */
 #click-text {
     position: absolute;
-    bottom: 3vh;
-    left: 1vw;
+    bottom: 30px;
+    left: 10px;
     z-index: 1001;
-    font-size: 1vw;
+    font-size: 12px;
     color: #355e3b;
     text-align: center;
-    width: 10vw;
+    width: 80px;
 }
 
 /* Default font and margin settings */
@@ -149,61 +158,67 @@ body {
     padding: 0;
 }
 
+/* Style for headers */
 h2 {
-    font-size: 2.4vw;
+    font-size: 24px;
     color: green;
-    margin-top: 2vh;
+    margin-top: 20px;
 }
 
-/* Popup styles */
+/* Popup styles for various elements */
 .litter-popup, .birb-popup, .animal-popup, .tree-popup, .safety-popup, .savedPopup {
     background: white;
-    padding: 1vh 1vw;
+    padding: 10px;
     border: 2px solid green;
     position: relative;
     z-index: 999;
-    border-radius: 0.8vw;
-    box-shadow: 0 0.8vh 1.6vh rgba(0, 0, 0, 0.8);
-    width: 30vw;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+    width: 300px;
 }
 
+/* Style the form elements */
 textarea, input[type="text"], select {
-    width: 90%;
-    padding: 1vh;
+    width: 80%;
+    padding: 10px;
     border: 2px solid #355e3b;
-    border-radius: 0.4vw;
-    font-size: 1.2vw;
+    border-radius: 4px;
+    font-size: 14px;
     font-family: 'Comfortaa', sans-serif;
-    margin-bottom: 2vh;
+    margin-bottom: 20px;
     resize: vertical;
     appearance: none;
     background: white;
 }
 
+/* Custom file upload button */
 .custom-file-upload {
     display: inline-block;
-    padding: 1vh 2vw;
+    padding: 10px 20px;
     cursor: pointer;
     background-color: #4CAF50;
     color: white;
-    border-radius: 0.4vw;
+    border-radius: 4px;
     border: none;
-    font-size: 1.2vw;
+    font-size: 14px;
     text-align: center;
 }
 
+/* Hover effect for file upload button */
 .custom-file-upload:hover {
     background-color: #45a049;
 }
 
+/* Fade-in animation */
 .fadeIn {
     animation: fadeInAnimation 0.5s ease forwards;
 }
 
+/* Defines the steps for a fade-in animation */
 @keyframes fadeInAnimation {
     from {
         opacity: 0;
-        transform: translateX(-1vw);
+        transform: translateX(-10px);
     }
     to {
         opacity: 1;
@@ -211,58 +226,64 @@ textarea, input[type="text"], select {
     }
 }
 
+/* Style for small text displaying the selected file name */
 #fileName {
-    font-size: 1vw;
+    font-size: 12px;
     color: gray;
 }
 
 /* Custom active state colours for specific toggles */
 #toggleBoundary.active { background-color: #607D8B !important; }
-#toggleRoseburn.active, #toggleTelford.active, #toggleFerryRd.active, #toggleHawthorn.active { background-color: #4CAF50 !important; }
+#toggleRoseburn.active { background-color: #4CAF50  !important; }
+#toggleTelford.active { background-color: #4CAF50 !important; }
+#toggleFerryRd.active { background-color: #4CAF50 !important; }
+#toggleHawthorn.active { background-color: #4CAF50  !important; }
 #toggleAddIcon.active { background-color: #E91E63 !important; }
 #toggleReportBirb.active { background-color: #9C27B0 !important; }
 #toggleReportAnimal.active { background-color: #2196f3 !important; }
 #toggleReportTree.active { background-color: #177c57 !important; }
 #toggleReportSafety.active { background-color: #FF9800 !important; }
-#toggleBirds.active { background-color: #9C27B0 !important; }
+#toggleBirds.active { background-color: #9C27B0  !important; }
 #toggleLitter.active { background-color: #E91E63 !important; }
-#toggleAnimals.active { background-color: #2196f3 !important; }
+#toggleAnimals.active { background-color: #2196f3!important; }
 #toggleTrees.active { background-color: #177c57 !important; }
-#toggleSafety.active { background-color: #FF9800 !important; }
+#toggleSafety.active { background-color: #FF9800!important; }
 #toggleAllOff.active { background-color: #e43a14 !important; }
 
 /* Info-box style, hidden by default */
 #info-box {
     display: none;
     position: absolute;
-    top: 9vh;
-    left: 5vw;
+    top: 85px;
+    left: 50px;
     z-index: 2001;
     background-color: white;
     border: 2px solid #355e3b;
-    padding: 1.5vh 1vw;
-    border-radius: 0.8vw;
-    width: 30vw;
-    box-shadow: 0 0.4vh 0.8vh rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    width: 260px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Style for unordered list inside info-box */
 #info-box ul {
     text-align: left;
-    padding-left: 2vw;
+    padding-left: 20px;
 }
 
+/* Info button style */
 #info-button {
     position: absolute;
-    top: 1vh;
-    left: 5vw;
+    top: 10px;
+    left: 50px;
     z-index: 1000;
     background-color: white;
     color: black;
     border: 2px solid #355e3b;
-    padding: 1vh;
-    font-size: 1.5vw;
+    padding: 10px;
+    font-size: 16px;
     cursor: pointer;
-    border-radius: 0.5vw;
-    width: 10vw;
-    height: 7vh; 
+    border-radius: 5px;
+    width: 80px;
+    height: 70px; 
 }

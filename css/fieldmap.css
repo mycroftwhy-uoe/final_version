@@ -7,27 +7,27 @@ body, html {
 }
 
 .navbar-custom {
-    background-color: #355E3B; /* Hunter Green */
+    background-color: #355E3B;
 }
 
 .navbar-dark .navbar-nav .nav-link {
-    color: #fff; /* Ensure texts are white for better visibility */
+    color: #fff;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover {
-    color: #ccc; /* Lighter shade when hovered */
+    color: #ccc;
 }
 
 .navbar-brand img {
-    height: 50px; /* Adjust size as needed */
+    height: 50px;
 }
 
 section {
-    position: fixed; 
-    top: 70px; 
+    position: fixed;
+    top: 70px;
     left: 0;
     right: 0;
-    bottom: 40px; 
+    bottom: 40px;
     width: 100%;
 }
 
@@ -44,5 +44,36 @@ footer {
     padding: 10px 0;
     width: 100%;
     bottom: 0;
-    position: fixed; /* Keep the footer at the bottom */
+    position: fixed;
+}
+
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 40px;
+    }
+
+    section {
+        top: 60px;
+        bottom: 30px;
+    }
+
+    footer {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand img {
+        height: 30px;
+    }
+
+    section {
+        top: 50px;
+        bottom: 20px;
+    }
+
+    footer {
+        font-size: 12px;
+        padding: 8px 0;
+    }
 }
