@@ -721,7 +721,7 @@ $(document).ready(function() {
   // Function to send feature data to the server
   function sendFeatureData(data) {
     $.ajax({
-      url: saveFeatureUrl,
+      url: '/saveFeature',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
