@@ -719,7 +719,7 @@ $(document).ready(function() {
   // Function to send feature data to the server
   function sendFeatureData(data) {
     $.ajax({
-      url: '/saveFeature',
+      url: "{{ url_for(saveFeature) }}",
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
