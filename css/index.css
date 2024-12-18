@@ -48,9 +48,9 @@ body, html {
 
 .main-content, .group-names {
     position: relative; /* Change position to relative for better control */
-    margin: 150px auto; /* Centering the divs */
+    margin: 100px auto; /* Centering the divs */
     background-color: rgba(53, 94, 59, 0.9); /* Semi-transparent background */
-    padding: 20px; /* Add padding */
+    padding: 50px; /* Add padding */
     box-sizing: border-box; /* Include padding in width */
 }
 
@@ -61,6 +61,7 @@ body, html {
 .group-names {
     width: 50%; /* Adjusted width as per your request */
     text-align: center;
+    font-size: 18px;
 }
 
 footer {

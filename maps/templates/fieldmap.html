@@ -39,21 +39,20 @@
         }
         
         .layer-control {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: white;
-        padding: 10px 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        z-index: 1000;
-        display: flex;
-        flex-wrap: wrap; 
-        gap: 10px;
-        width: auto;
-        max-width: 90vw;
-        }  
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            width: auto;
+            max-width: 90vw;
+        }
 
         .grayscale-tiles {
             filter: grayscale(100%) !important;
@@ -75,10 +74,6 @@
         }
         
         .layer-control button {
-            flex: 1 1 auto; /* 按钮可以增长和缩小，自动调整大小 */
-            margin: 5px; /* 增加边距以避免重叠 */
-            padding: 12px 20px;
-            min-width: 100px; 
             display: block;
             margin: 10px 0;
             padding: 12px 20px;
