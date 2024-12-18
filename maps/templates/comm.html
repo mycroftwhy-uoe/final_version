@@ -23,6 +23,8 @@
     var stationUrl="{{ url_for('static', filename='station.png') }}";
     var trashUrl="{{ url_for('static', filename='trash.png') }}";
     var treeUrl="{{ url_for('static', filename='tree.png') }}";
+    var saveFeatureUrl="{{ url_for('saveFeature') }}";
+    var loadfeaturesUrl="{{ url_for('load_all_features') }}"
     </script>
     <!-- Link to css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='comm.css') }}">
@@ -412,7 +414,7 @@ $(document).ready(function() {
   // Function to load features from the server
   function loadSavedFeatures() {
     $.ajax({
-      url: "{{ url_for('load_all_features') }}",
+      url: loadfeaturesUrl,
       type: 'GET',
       success: function(features) {
         features.forEach(featureData => {
@@ -719,7 +721,7 @@ $(document).ready(function() {
   // Function to send feature data to the server
   function sendFeatureData(data) {
     $.ajax({
-      url: '/saveFeature',
+      url: saveFeatureUrl,
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),

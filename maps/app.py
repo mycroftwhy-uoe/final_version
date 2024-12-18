@@ -83,7 +83,7 @@ def fieldmap():
 def communitymap():
     return render_template('comm.html')
 
-@app.route('/saveFeature', methods=['POST'])
+@app.route('/saveFeature', methods=['POST'], endpoint='saveFeature')
 def save_feature():
     data = request.json
     features = load_features()
@@ -91,7 +91,7 @@ def save_feature():
     save_features(features)
     return jsonify({"message": "Feature saved successfully!"}), 200
 
-@app.route('/loadFeatures', methods=['GET'])
+@app.route('/loadFeatures', methods=['GET'], endpoint='load_all_features')
 def load_all_features():
     features = load_features()
     return jsonify(features)
