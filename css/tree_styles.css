@@ -1,0 +1,78 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Comfortaa', cursive;
+    color: #333;
+}
+
+.navbar-custom {
+    background-color: #355E3B; /* Hunter Green */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Ensure texts are white for better visibility */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ccc; /* Lighter shade when hovered */
+}
+
+.navbar-brand img {
+    height: 50px; /* Adjust size as needed */
+}
+
+.header-content {
+    text-align: center;
+    padding: 20px 10px; /* Adjust as necessary */
+    background-color: #f8f9fa; /* Light background for the header content */
+    margin-top: 60px; /* Add more space at the top if needed */
+}
+
+.tree-gallery {
+    width: 75%;
+    margin: auto; /* Automatically centers the block element horizontally */
+    padding-top: 20px;
+}
+
+.tree-item {
+    margin-bottom: 30px; /* Increased spacing at the bottom of each tree item */
+    padding: 15px; /* Padding inside each tree item */
+    background: #fff; /* White background for better visibility */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 4px; /* Rounded corners for a softer appearance */
+}
+
+.tree-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px; /* Makes the images have rounded corners too */
+}
+
+.tree-item h3 {
+    color: #355E3B;
+    font-size: 24px;
+    margin-top: 0;
+}
+
+.tree-item p, .tree-item ul {
+    font-size: 16px;
+    color: #666;
+}
+
+.tree-item ul {
+    padding-left: 20px;
+}
+
+.tree-item li {
+    margin-bottom: 5px;
+}
+
+
+footer {
+    background-color: #355E3B;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative; /* Changed from fixed or absolute if needed */
+    width: 100%;
+}

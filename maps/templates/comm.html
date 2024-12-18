@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGS</title>
+    <!-- OpenLayers CSS for map styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.1.0/ol.css">
+    <!-- Google Fonts for custom font styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+    var wholePathUrl = "{{ url_for('static', filename='wholepath.geojson') }}";
+    var boundaryPathUrl = "{{ url_for('static', filename='boundary.geojson') }}";
+    var roseburnPathUrl="{{ url_for('static', filename='roseburn.geojson') }}";
+    var telfordPathUrl="{{ url_for('static', filename='telford.geojson') }}";
+    var ferryrdPathUrl="{{ url_for('static', filename='ferryrd.geojson') }}";
+    var hawthornPathUrl="{{ url_for('static', filename='hawthorn.geojson') }}";
+    var birbUrl="{{ url_for('static', filename='birb.png') }}";
+    var bookUrl="{{ url_for('static', filename='book.png') }}";
+    var locomotiveUrl="{{ url_for('static', filename='locomotive.png') }}";
+    var railwaystationUrl="{{ url_for('static', filename='railway-station.png') }}";
+    var squirrelUrl="{{ url_for('static', filename='squirrel.png') }}";
+    var stationUrl="{{ url_for('static', filename='station.png') }}";
+    var trashUrl="{{ url_for('static', filename='trash.png') }}";
+    var treeUrl="{{ url_for('static', filename='tree.png') }}";
+    </script>
+    <!-- Link to css -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='comm.css') }}">
+</head>
+<body>
+    <!-- Main map container -->
+    <div id="map">
+        <!-- Panel with button controls for layer toggling and reporting -->
+        <div id="layer-select-tabs">
+            <h3>Boundary</h3>
+            <button id="toggleBoundary">Boundary</button>
+            <h3>Paths</h3>
+            <button id="toggleRoseburn">Roseburn Path</button>
+            <button id="toggleTelford">Telford Path</button>
+            <button id="toggleFerryRd">Ferry Road Path</button>
+            <button id="toggleHawthorn">Hawthorn Path</button>
+            <button id="toggleAllOff">Toggle All</button>
+            <h3>Info</h3>
+            <button id="toggleAddIcon">Report Litter</button>
+            <button id="toggleReportBirb">Report Bird</button>
+            <button id="toggleReportAnimal">Report Animal</button>
+            <button id="toggleReportTree">Report Tree</button>
+            <button id="toggleReportSafety">Report Experience</button>
+            <h3>Toggle On/Off</h3>
+            <button id="toggleLitter">Toggle Litter</button>
+            <button id="toggleBirds">Toggle Birds</button>
+            <button id="toggleAnimals">Toggle Animals</button>
+            <button id="toggleTrees">Toggle Trees</button>
+            <button id="toggleSafety">Toggle Experiences</button>
+        </div>
+        <button class="styled-button" id="train-button">🚂</button>
+        <div id="click-text">Click me!</div>
+        <div id="hide-layer-panel"><span>Hide Panel</span></div>
+        <div id="show-layer-panel"><span>Show Panel</span></div>
+        <div id="info-box">
+          <h3>Help us collect data on the environmental attractiveness of Edinburgh and your experiences!</h3>
+          <p>You can report:</p>
+          <ul>
+              <li>Animals</li>
+              <li>Birds</li>
+              <li>Litter</li>
+              <li>Trees (or other plant life)</li>
+              <li>And share your experiences, good or bad</li>
+          </ul>
+          <p><strong>Basic controls:</strong><br>
+          Scroll to zoom in and out of the map or use the + and - buttons at the side.</p>
+          <p>Using the side panel you can toggle on and off the original paths included in our research. To report a feature simply click on the appropriate button and then click on the map where you found it and fill in the details. You can also add an image of what you found but please be appropriate! </p>
+          <p>You can also click on any of the icons on the map to see the contributions of others.</p>
+          <p><strong>Have Fun!</strong><br>
+          <p>This map was originally intended to collect data for the North Leith Caledonian Railway Path, but it quickly became clear that it was more beneficial to be able to report for the whole of Edinburgh.</p>
+          <p>I hope you enjoy our map experience :)</p>
+          <p style="font-size: 12px; color: grey;">Make sure to refresh the page if you want to view your own contributions.</p>
+          <!-- Button to close the information box -->
+          <button id="close-info" style="background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer;">Close</button>
+      </div>
+        <button id="info-button">INFO</button>
+    </div>
+    <!-- jQuery for handling interactions -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- OpenLayers library for map functionalities -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@v10.1.0/dist/ol.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#info-button').click(function() {
+                $('#info-box').toggle();  // Toggle display of info box
+            });
+            $('#close-info').click(function() {
+                $('#info-box').hide();  // Hide info box
+            });
+            
+$(document).ready(function() {
+  // Variables to track if the train animation is active
+  let trainAnimationActive = false;
+  let trainStartTime;
+  let trainPath, trainFeature, vectorLayer;
+  const animationDuration = 10000; 
+
+  // Toggle train animation on button click
+  $('#train-button').click(function() {
+    if (trainAnimationActive) {
+      stopTrainAnimation();
+    } else {
+      startTrainAnimation();
+    }
+  });
+
+  // Function to start the train animation
+  function startTrainAnimation() {
+    if (!trainPath) return;
+    trainAnimationActive = true;
+    console.log('Train animation started');
+    $('#train-button').addClass('active');
+    trainStartTime = Date.now();
+    requestAnimationFrame(animateTrain);
+  }
+
+  // Function to stop the train animation
+  function stopTrainAnimation() {
+    trainAnimationActive = false;
+    console.log('Train animation stopped');
+    $('#train-button').removeClass('active');
+    trainFeature.setGeometry(null);
+  }
+
+  // Variables and styles for station features
+  let stationStartFeature, stationEndFeature, stationLayer;
+  
+  const startStationStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      src: railwaystationUrl,
+      scale: 0.1
+    })
+  });
+
+  const endStationStyle = new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 0.5],
+      src: stationUrl,
+      scale: 0.1
+    })
+  });
+
+  // Load the train path from a GeoJSON file
+  fetch(wholePathUrl)
+    .then(response => response.json())
+    .then(data => {
+      const format = new ol.format.GeoJSON();
+      const features = format.readFeatures(data, {
+        featureProjection: map.getView().getProjection()
+      });
+
+      // If path features are found, set them up
+      if (features.length > 0) {
+        trainPath = features[0].getGeometry();
+        trainFeature = new ol.Feature({
+          geometry: null
+        });
+
+        const trainStyle = new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            src: locomotiveUrl,
+            scale: 0.1
+          })
+        });
+
+        stationStartFeature = new ol.Feature({
+          geometry: new ol.geom.Point(trainPath.getFirstCoordinate())
+        });
+        stationStartFeature.setStyle(startStationStyle);
+
+        stationEndFeature = new ol.Feature({
+          geometry: new ol.geom.Point(trainPath.getLastCoordinate())
+        });
+        stationEndFeature.setStyle(endStationStyle);
+
+        vectorLayer = new ol.layer.Vector({
+          source: new ol.source.Vector({
+            features: [trainFeature]
+          }),
+          style: trainStyle,
+          zIndex: 1000
+        });
+
+        stationLayer = new ol.layer.Vector({
+          source: new ol.source.Vector({
+            features: [stationStartFeature, stationEndFeature]
+          })
+        });
+
+        map.addLayer(vectorLayer);
+        map.addLayer(stationLayer);
+        stationLayer.setVisible(false);
+      } else {
+        console.error('No path found in GeoJSON.');
+      }
+    })
+    .catch(error => console.error('Error loading GeoJSON:', error));
+
+  // Redefining startTrainAnimation to include visibility toggle
+  function startTrainAnimation() {
+    if (!trainPath) return;
+    trainAnimationActive = true;
+    console.log('Train animation started');
+    $('#train-button').addClass('active');
+    trainStartTime = Date.now();
+    stationLayer.setVisible(true);
+    requestAnimationFrame(animateTrain);
+  }
+
+  // Redefining stopTrainAnimation to include visibility toggle
+  function stopTrainAnimation() {
+    trainAnimationActive = false;
+    console.log('Train animation stopped');
+    $('#train-button').removeClass('active');
+    trainFeature.setGeometry(null);
+    stationLayer.setVisible(false);
+  }
+
+  // Function to handle the train animation process
+  function animateTrain() {
+    if (!trainAnimationActive) return;
+
+    const currentTime = Date.now();
+    const elapsed = currentTime - trainStartTime;
+
+    // Stop animation when duration is completed
+    if (elapsed >= animationDuration) {
+      stopTrainAnimation();
+      console.log('Train animation completed');
+      return;
+    }
+
+    // Calculate current position based on progress
+    const progress = elapsed / animationDuration;
+    const currentCoordinate = trainPath.getCoordinateAt(progress);
+    trainFeature.setGeometry(new ol.geom.Point(currentCoordinate));
+    map.render(); 
+
+    // Continue the animation
+    requestAnimationFrame(animateTrain);
+  }
+
+  // Function to create a glow effect for features
+  function createGlowStyle(strokeColor, glowColor, width, glowWidth) {
+    return [
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({ color: glowColor, width: glowWidth }),
+      }),
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({ color: strokeColor, width: width }),
+      }),
+    ];
+  }
+
+  // Function to create a vector layer with specific styles
+  function createVectorLayer(url, strokeColor, glowColor) {
+    return new ol.layer.Vector({
+      source: new ol.source.Vector({
+        url: url,
+        format: new ol.format.GeoJSON(),
+      }),
+      style: createGlowStyle(strokeColor, glowColor, 0, 50),
+      visible: false,
+    });
+  }
+
+  // Base map layer setup
+  const baseLayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      attributions: 'Powered by Esri',
+    }),
+  });
+
+  // Boundary and additional layers setup
+  const boundaryLayer = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: boundaryPathUrl,
+      format: new ol.format.GeoJSON(),
+    }),
+    style: new ol.style.Style({
+      stroke: new ol.style.Stroke({ color: 'green', width: 1 }),
+    }),
+    visible: true,
+  });
+
+  const roseburnLayer = createVectorLayer(roseburnPathUrl, 'rgba(0, 200, 0, 0.5)', 'rgba(0, 255, 0, 0.1)');
+  const telfordLayer = createVectorLayer(telfordPathUrl, 'rgba(0, 200, 0, 0.5)', 'rgba(0, 255, 0, 0.1)');
+  const ferryrdLayer = createVectorLayer(ferryrdPathUrl, 'rgba(0, 200, 0, 0.5)', 'rgba(0, 255, 0, 0.1)');
+  const hawthornLayer = createVectorLayer(hawthornPathUrl, 'rgba(0, 200, 0, 0.5)', 'rgba(0, 255, 0, 0.1)');
+
+  // User icon layers setup
+  const userIconLayer = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: trashUrl,
+        scale: 0.08,
+      })
+    }),
+    zIndex: 999
+  });
+
+  const birbIconLayer = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: birbUrl,
+        scale: 0.15,
+      })
+    }),
+    zIndex: 1000
+  });
+
+  const animalIconLayer = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: squirrelUrl,
+        scale: 0.08,
+      })
+    }),
+    zIndex: 1000
+  });
+
+  const treeIconLayer = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: treeUrl,
+        scale: 0.08,
+      })
+    }),
+    zIndex: 1000
+  });
+
+  const safetyLayer = new ol.layer.Vector({
+    source: new ol.source.Vector(),
+    style: new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: bookUrl,
+        scale: 0.08,
+      })
+    }),
+    zIndex: 1000
+  });
+
+  // Map extent and initial setup
+  const mapExtent = [-3.6, 55.8, -2.9, 56.1];
+
+  const map = new ol.Map({
+    target: 'map',
+    layers: [
+      baseLayer,
+      boundaryLayer,
+      roseburnLayer,
+      telfordLayer,
+      ferryrdLayer,
+      hawthornLayer,
+      userIconLayer,
+      birbIconLayer,
+      animalIconLayer,
+      treeIconLayer,
+      safetyLayer
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([-3.2164192, 55.924971]),
+      zoom: 10.5,
+      maxZoom: 16.5,
+      extent: ol.proj.transformExtent(mapExtent, 'EPSG:4326', 'EPSG:3857')
+    }),
+  });
+
+  // Set initial visibility for certain layers based on button statuses
+  if (birbIconLayer.getVisible()) {
+    $('#toggleBirds').addClass('active');
+  }
+
+  if (userIconLayer.getVisible()) {
+    $('#toggleLitter').addClass('active');
+  }
+
+  if (animalIconLayer.getVisible()) {
+    $('#toggleAnimals').addClass('active');
+  }
+
+  if (treeIconLayer.getVisible()) {
+    $('#toggleTrees').addClass('active');
+  }
+
+  if (safetyLayer.getVisible()) {
+    $('#toggleSafety').addClass('active');
+  }
+
+  // Function to load features from the server
+  function loadSavedFeatures() {
+    $.ajax({
+      url: "{{ url_for('load_all_features') }}",
+      type: 'GET',
+      success: function(features) {
+        features.forEach(featureData => {
+          const point = new ol.geom.Point(featureData.coordinates);
+          const feature = new ol.Feature(point);
+
+          // Set feature properties
+          feature.set('grade', featureData.grade || '');
+          feature.set('additionalInfo', featureData.additionalInfo || '');
+          feature.set('species', featureData.species || '');
+          feature.set('photo', featureData.photo || '');
+          feature.set('experienceType', featureData.experienceType || '');
+          feature.set('safetyInfo', featureData.safetyInfo || '');
+
+          let layer;
+          // Determine the appropriate layer for each feature
+          switch (featureData.layer) {
+            case 'userIconLayer':
+              layer = userIconLayer;
+              break;
+            case 'birbIconLayer':
+              layer = birbIconLayer;
+              break;
+            case 'animalIconLayer':
+              layer = animalIconLayer;
+              break;
+            case 'treeIconLayer':
+              layer = treeIconLayer;
+              break;
+            case 'safetyLayer':
+              layer = safetyLayer;
+              break;
+            default:
+              console.warn('Unknown layer:', featureData.layer);
+          }
+
+          // Add the feature to the appropriate layer
+          if (layer) {
+            layer.getSource().addFeature(feature);
+          }
+        });
+      },
+      error: function(xhr, status, error) {
+        console.error('Error loading features:', error);
+      }
+    });
+  }
+
+  loadSavedFeatures();
+
+  // Indicators for adding different types of icons
+  let addingIcons = false;
+  let addingBirbs = false;
+  let addingAnimals = false;
+  let addingTrees = false;
+  let addingSafety = false;
+  let popupOpen = false;
+
+  // Create a popup element
+  const popupElement = document.createElement('div');
+  popupElement.style.position = 'absolute';
+  document.body.appendChild(popupElement);
+
+  // Overlay to show popup content
+  const popupOverlay = new ol.Overlay({
+    element: popupElement,
+    positioning: 'center-right',
+    offset: [-360, -100],
+    stopEvent: true
+  });
+
+  map.addOverlay(popupOverlay);
+
+  // Toggle button function to add different icons
+  $('#toggleAddIcon').click(function() {
+    addingIcons = !addingIcons;
+    addingBirbs = addingAnimals = addingTrees = addingSafety = false;
+    $(this).toggleClass('active', addingIcons);
+    $('#toggleReportBirb, #toggleReportAnimal, #toggleReportTree, #toggleReportSafety').removeClass('active');
+  });
+
+  $('#toggleReportBirb').click(function() {
+    addingBirbs = !addingBirbs;
+    addingIcons = addingAnimals = addingTrees = addingSafety = false;
+    $(this).toggleClass('active', addingBirbs);
+    $('#toggleAddIcon, #toggleReportAnimal, #toggleReportTree, #toggleReportSafety').removeClass('active');
+  });
+
+  $('#toggleReportAnimal').click(function() {
+    addingAnimals = !addingAnimals;
+    addingIcons = addingBirbs = addingTrees = addingSafety = false;
+    $(this).toggleClass('active', addingAnimals);
+    $('#toggleAddIcon, #toggleReportBirb, #toggleReportTree, #toggleReportSafety').removeClass('active');
+  });
+
+  $('#toggleReportTree').click(function() {
+    addingTrees = !addingTrees;
+    addingIcons = addingBirbs = addingAnimals = addingSafety = false;
+    $(this).toggleClass('active', addingTrees);
+    $('#toggleAddIcon, #toggleReportBirb, #toggleReportAnimal, #toggleReportSafety').removeClass('active');
+  });
+
+  $('#toggleReportSafety').click(function() {
+    addingSafety = !addingSafety;
+    addingIcons = addingBirbs = addingAnimals = addingTrees = false;
+    $(this).toggleClass('active', addingSafety);
+    $('#toggleAddIcon, #toggleReportBirb, #toggleReportAnimal, #toggleReportTree').removeClass('active');
+  });
+
+  // Ensure features are within boundary before adding them
+  const boundarySource = boundaryLayer.getSource();
+  boundarySource.once('change', function() {
+    if (boundarySource.getState() === 'ready') {
+      const boundaryFeature = boundarySource.getFeatures()[0];
+      const boundaryGeometry = boundaryFeature.getGeometry();
+
+      map.on('click', function(evt) {
+        // Check if adding any icons and if popup is not open
+        if ((addingIcons || addingBirbs || addingAnimals || addingTrees || addingSafety) && !popupOpen) {
+          const clickedCoordinate = evt.coordinate;
+
+          // Only allow adding features within the boundary
+          if (boundaryGeometry.intersectsCoordinate(clickedCoordinate)) {
+            const iconFeature = new ol.Feature({
+              geometry: new ol.geom.Point(clickedCoordinate)
+            });
+
+            let layer;
+            if (addingIcons) layer = userIconLayer;
+            else if (addingBirbs) layer = birbIconLayer;
+            else if (addingAnimals) layer = animalIconLayer;
+            else if (addingTrees) layer = treeIconLayer;
+            else if (addingSafety) layer = safetyLayer;
+
+            // Add the icon feature to the determined layer
+            layer.getSource().addFeature(iconFeature);
+
+            const popupContent = addingIcons ? `
+              <label for="litterGrade">Litter Grade:</label>
+              <select id="litterGrade">
+                <option value="">Select Grade</option>
+                <option value="A">A - Very Clean</option>
+                <option value="B">B - Clean</option>
+                <option value="C">C - Littered</option>
+                <option value="D">D - Heavily Littered</option>
+              </select><br>
+              <label for="infoInput">Additional Information:</label>
+              <textarea id="infoInput" rows="2" cols="30" placeholder="Enter info..."></textarea><br>
+              <label for="photoInput" class="custom-file-upload">Choose File</label>
+              <input type="file" id="photoInput" style="display: none;"><br>
+              <span id="fileName">No file selected</span><br>` : `
+              <label for="speciesInput">Species:</label>
+              <input type="text" id="speciesInput" placeholder="Enter species..."><br>
+              <label for="photoInput" class="custom-file-upload">Choose File</label>
+              <input type="file" id="photoInput" style="display: none;"><br>
+              <span id="fileName">No file selected</span><br>`;
+
+            const safetyPopupContent = `
+              <label for="experienceType">Experience Type:</label>
+              <select id="experienceType">
+                <option value="">Select Type</option>
+                <option value="positive">Positive</option>
+                <option value="negative">Negative</option>
+              </select><br>
+              <label for="safetyInfo">Notes:</label>
+              <textarea id="safetyInfo" rows="2" cols="30" placeholder="Enter details..."></textarea><br>
+              <label for="photoInput" class="custom-file-upload">Choose File</label>
+              <input type="file" id="photoInput" style="display: none;"><br>
+              <span id="fileName">No file selected</span><br>`;
+
+            popupElement.innerHTML = `
+              <div class="${addingIcons ? 'litter-popup' : addingBirbs ? 'birb-popup' : addingAnimals ? 'animal-popup' : addingTrees ? 'tree-popup' : 'safety-popup'} fadeIn">
+                <h4>Add ${addingIcons ? "Litter" : addingBirbs ? "Bird" : addingAnimals ? "Animal" : addingTrees ? "Tree" : "Experience"} Information</h4>
+                ${addingSafety ? safetyPopupContent : popupContent}
+                <button id="saveInfo">Save</button>
+                <button id="cancelInfo">Cancel</button>
+              </div>`;
+
+            // Set popup position and animate map to focus on the location
+            popupOverlay.setPosition(clickedCoordinate);
+            map.getView().animate({ center: clickedCoordinate, duration: 500 });
+            popupOpen = true;
+
+            // Update file name when file is selected
+            $('#photoInput').change(function() {
+              const fileName = $('#photoInput')[0].files[0] ? $('#photoInput')[0].files[0].name : 'No file selected';
+              $('#fileName').text(fileName);
+            });
+
+            // Save feature information
+            $('#saveInfo').click(function() {
+              let isValid = false;
+              const layerName = layer === userIconLayer ? 'userIconLayer' :
+                layer === birbIconLayer ? 'birbIconLayer' :
+                layer === animalIconLayer ? 'animalIconLayer' :
+                layer === treeIconLayer ? 'treeIconLayer' :
+                'safetyLayer';
+
+              let data = {
+                coordinates: evt.coordinate,
+                layer: layerName
+              };
+
+              // Validate and collect data from the popup form
+              if (addingIcons) {
+                const grade = $('#litterGrade').val();
+                const info = $('#infoInput').val();
+                if (grade && info) {
+                  data.grade = grade;
+                  data.additionalInfo = info;
+                  isValid = true;
+                }
+              } else if (addingBirbs || addingAnimals || addingTrees) {
+                const species = $('#speciesInput').val();
+                if (species) {
+                  data.species = species;
+                  isValid = true;
+                }
+              } else if (addingSafety) {
+                const type = $('#experienceType').val();
+                const safetyInfo = $('#safetyInfo').val();
+                if (type && safetyInfo) {
+                  data.experienceType = type;
+                  data.safetyInfo = safetyInfo;
+                  isValid = true;
+                }
+              }
+
+              // Alert user if form is incomplete
+              if (!isValid) {
+                alert("Please fill in all required fields.");
+                return;
+              }
+
+              const photoFile = $('#photoInput')[0].files[0];
+              if (photoFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  data.photo = e.target.result;
+                  sendFeatureData(data);
+                };
+                reader.readAsDataURL(photoFile);
+              } else {
+                sendFeatureData(data);
+              }
+
+              // Close the popup after saving
+              closePopup();
+            });
+
+            // Cancel adding feature and remove incomplete icon
+            $('#cancelInfo').click(function() {
+              layer.getSource().removeFeature(iconFeature);
+              closePopup();
+            });
+
+          } else {
+            alert("I appreciate your enthusiasm Bruce, but unfortunately, this isn't Edinburgh :(");
+          }
+
+        } else {
+          // Display information of existing features on click
+          map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            if ([userIconLayer, birbIconLayer, animalIconLayer, treeIconLayer, safetyLayer].includes(layer)) {
+              const coordinate = feature.getGeometry().getCoordinates();
+              const lonLat = ol.proj.toLonLat(coordinate);
+
+              popupOverlay.setPosition(coordinate);
+              map.getView().animate({ center: coordinate, duration: 500 });
+
+              const grade = feature.get('grade');
+              const additionalInfo = feature.get('additionalInfo');
+              const species = feature.get('species');
+              const photo = feature.get('photo');
+              const safetyInfo = feature.get('safetyInfo');
+              const experienceType = feature.get('experienceType');
+
+              popupElement.innerHTML = `
+                <div class="savedPopup fadeIn">
+                  <button id="closePopup" style="position: absolute; top: 5px; right: 5px; background: none; border: none; font-size: 18px; cursor: pointer;">&times;</button>
+                  <h3>${layer === birbIconLayer ? "Bird sighting!" : layer === animalIconLayer ? "Animal sighting!" : layer === treeIconLayer ? "Tree!" : layer === safetyLayer ? "Experience" : "Litter"}</h3>
+                  ${experienceType ? `<p><strong>Experience Type:</strong> ${experienceType}</p>` : ''}
+                  ${safetyInfo ? `<p><strong>Notes:</strong> ${safetyInfo}</p>` : ''}
+                  ${grade ? `<p><strong>Grade:</strong> ${grade}</p>` : ''}
+                  ${additionalInfo ? `<p><strong>Additional Info:</strong> ${additionalInfo}</p>` : ''}
+                  ${species ? `<p><strong>Species:</strong> ${species}</p>` : ''}
+                  ${photo ? `<img src="${photo}" alt="Uploaded Photo" style="max-width:100%; height:auto;"><br>` : ''}
+                  <p style="font-size: smaller;"><strong>Coordinates:</strong> [${lonLat[0].toFixed(6)}, ${lonLat[1].toFixed(6)}]</p>
+                </div>
+              `;
+
+              $('#closePopup').click(function() {
+                closePopup();
+              });
+
+              return true;
+            }
+          });
+        }
+      });
+    }
+  });
+
+  // Function to send feature data to the server
+  function sendFeatureData(data) {
+    $.ajax({
+      url: '/saveFeature',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: function(response) {
+        console.log(response.message);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error saving feature:', error);
+      }
+    });
+  }
+
+  // Close the popup and reset indicators
+  function closePopup() {
+    popupOverlay.setPosition(undefined);
+    popupOpen = false;
+    addingIcons = addingBirbs = addingAnimals = addingTrees = addingSafety = false;
+    $('#toggleAddIcon, #toggleReportBirb, #toggleReportAnimal, #toggleReportTree, #toggleReportSafety').removeClass('active');
+  }
+
+  // Toggle layer visibility with button
+  $('#toggleBirds').click(function() {
+    const isVisible = birbIconLayer.getVisible();
+    birbIconLayer.setVisible(!isVisible);
+    $(this).toggleClass('active', !isVisible);
+  });
+
+  $('#toggleLitter').click(function() {
+    const isVisible = userIconLayer.getVisible();
+    userIconLayer.setVisible(!isVisible);
+    $(this).toggleClass('active', !isVisible);
+  });
+
+  $('#toggleAnimals').click(function() {
+    const isVisible = animalIconLayer.getVisible();
+    animalIconLayer.setVisible(!isVisible);
+    $(this).toggleClass('active', !isVisible);
+  });
+
+  $('#toggleTrees').click(function() {
+    const isVisible = treeIconLayer.getVisible();
+    treeIconLayer.setVisible(!isVisible);
+    $(this).toggleClass('active', !isVisible);
+  });
+
+  $('#toggleSafety').click(function() {
+    const isVisible = safetyLayer.getVisible();
+    safetyLayer.setVisible(!isVisible);
+    $(this).toggleClass('active', !isVisible);
+  });
+
+  // Toggle visibility for boundary and specific route layers
+  $('#toggleBoundary').click(function() {
+    toggleLayer(boundaryLayer, this);
+  });
+
+  $('#toggleRoseburn').click(function() {
+    toggleLayer(roseburnLayer, this);
+  });
+
+  $('#toggleTelford').click(function() {
+    toggleLayer(telfordLayer, this);
+  });
+
+  $('#toggleFerryRd').click(function() {
+    toggleLayer(ferryrdLayer, this);
+  });
+
+  $('#toggleHawthorn').click(function() {
+    toggleLayer(hawthornLayer, this);
+  });
+
+  // Toggle all routes' visibility at once
+  let allVisible = false;
+
+  $('#toggleAllOff').click(function() {
+    allVisible = !allVisible;
+    [roseburnLayer, telfordLayer, ferryrdLayer, hawthornLayer].forEach(layer => {
+      layer.setVisible(allVisible);
+      if (allVisible) {
+        animateLayer(layer);
+      }
+    });
+    $(this).toggleClass('active', allVisible);
+    $('#layer-select-tabs button')
+      .not('#toggleAddIcon, #toggleBoundary, #toggleReportBirb, #toggleReportAnimal, #toggleReportTree, #toggleReportSafety, #toggleBirds, #toggleAnimals, #toggleLitter, #toggleTrees, #toggleSafety')
+      .toggleClass('active', allVisible);
+  });
+
+  // Toggle the display of the layer panel
+  $("#hide-layer-panel span").click(function() {
+    $("#layer-select-tabs").hide(500);
+    $("#show-layer-panel").show();
+    $("#hide-layer-panel").hide();
+  });
+
+  $("#show-layer-panel span").click(function() {
+    $("#layer-select-tabs").show(500);
+    $("#hide-layer-panel").show();
+    $("#show-layer-panel").hide();
+  });
+
+  // Highlighting features
+  const highlightedFeatures = new ol.Collection();
+  const featureOverlay = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      features: highlightedFeatures,
+    }),
+    map: map,
+    style: function(feature) {
+      return pulsingStyle(feature.get('pulseScale') || 1);
+    }
+  });
+
+  function pulsingStyle(scale) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: '#355e3b',
+        width: 10 * scale
+      }),
+      zIndex: 1
+    });
+  }
+
+  const highlightStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      radius: 10,
+      fill: new ol.style.Fill({ color: 'rgba(255, 255, 0, 0.5)' }),
+      stroke: new ol.style.Stroke({ color: 'yellow', width: 2 })
+    })
+  });
+
+  let highlightedFeature = null;
+  let animationFrameId;
+
+  map.on('pointermove', function(evt) {
+    // Cancel previous highlight animations
+    if (highlightedFeature) {
+      cancelAnimationFrame(animationFrameId);
+      highlightedFeature.setStyle(null);
+      highlightedFeature = null;
+    }
+
+    // Highlight features on pointer move
+    map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+      if ([userIconLayer, birbIconLayer, animalIconLayer, treeIconLayer, safetyLayer].includes(layer)) {
+        highlightedFeature = feature;
+
+        let scale = 0.08;
+        let src;
+        
+        // Determine the source based on the layer
+        if (layer === userIconLayer) {
+          src = trashUrl;
+          scale = 0.08;
+        } else if (layer === birbIconLayer) {
+          src = birbUrl;
+          scale = 0.15;
+        } else if (layer === animalIconLayer) {
+          src = squirrelUrl;
+          scale = 0.08;
+        } else if (layer === treeIconLayer) {
+          src =treeUrl;
+          scale = 0.08;
+        } else if (layer === safetyLayer) {
+          src = bookUrl;
+          scale = 0.08;
+        }
+
+        let growing = true;
+        let currentScale = scale;
+
+        // Function to animate pulsing effect
+        function animate() {
+          currentScale = growing ? currentScale + 0.001 : currentScale - 0.001;
+          if (currentScale >= scale + 0.02) growing = false;
+          if (currentScale <= scale) growing = true;
+
+          feature.setStyle(createPulsingStyle(currentScale, src));
+
+          animationFrameId = requestAnimationFrame(animate);
+        }
+
+        animationFrameId = requestAnimationFrame(animate);
+        return true;
+      }
+    }, { hitTolerance: 5 });
+  });
+
+  // Function to create a pulsing style for features
+  function createPulsingStyle(scale, src) {
+    return new ol.style.Style({
+      image: new ol.style.Icon({
+        anchor: [0.5, 1],
+        crossOrigin: 'anonymous',
+        src: src,
+        scale: scale,
+      }),
+      zIndex: 999
+    });
+  }
+
+  // Toggle visibility function for individual layers
+  function toggleLayer(layer, button) {
+    const isVisible = layer.getVisible();
+    layer.setVisible(!isVisible);
+    $(button).toggleClass('active');
+    if (!isVisible) {
+      animateLayer(layer);
+    }
+  }
+
+  // Animate the transition for layer visibility
+  function animateLayer(layer) {
+    let start = Date.now();
+    const duration = 500;
+
+    function animate() {
+      const elapsed = Date.now() - start;
+      const ratio = Math.min(elapsed / duration, 1);
+      const styles = layer.getStyle();
+
+      if (styles && styles[1]) {
+        styles[1].getStroke().setWidth(ratio * 10);
+        layer.setStyle(styles);
+      }
+
+      if (ratio < 1) {
+        requestAnimationFrame(animate);
+      }
+    }
+
+    animate();
+  }
+});
+
+        });
+    </script>
+
+
+</body>
+</html>

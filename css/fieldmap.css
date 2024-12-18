@@ -1,0 +1,48 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Comfortaa', cursive;
+    color: #333;
+    padding: 0;
+}
+
+.navbar-custom {
+    background-color: #355E3B; /* Hunter Green */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Ensure texts are white for better visibility */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ccc; /* Lighter shade when hovered */
+}
+
+.navbar-brand img {
+    height: 50px; /* Adjust size as needed */
+}
+
+section {
+    position: fixed; 
+    top: 70px; 
+    left: 0;
+    right: 0;
+    bottom: 40px; 
+    width: 100%;
+}
+
+iframe {
+    height: 100%;
+    width: 100%;
+    border: none;
+}
+
+footer {
+    color: white;
+    background-color: #355E3B;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    bottom: 0;
+    position: fixed; /* Keep the footer at the bottom */
+}

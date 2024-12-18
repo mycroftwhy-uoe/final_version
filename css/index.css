@@ -1,0 +1,103 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column; /* Change to column layout */
+    align-items: center; /* Aligns vertically center */
+    justify-content: flex-start; /* Start aligning content from top */
+    font-family: 'Comfortaa', cursive;
+    color: white; /* Sets text color to white */
+    background-image: url('../images/bluebells.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.navbar-custom {
+    background-color: #355E3B; /* Hunter Green */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff; /* Ensure texts are white for better visibility */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ccc; /* Lighter shade when hovered */
+}
+
+.navbar-brand img {
+    height: 50px; /* Adjust size as needed */
+}
+
+
+/* Header and Paragraph Styles */
+.title {
+    font-size: 48px; /* Title font size */
+    margin-bottom: 30px; /* Space below the title */
+}
+
+.subtext {
+    font-size: 18px; /* Subtext font size */
+    margin-bottom: 30px; /* Space between subtext and description */
+}
+
+.description {
+    font-size: 24px; /* Description font size */
+}
+
+.main-content, .group-names {
+    position: relative; /* Change position to relative for better control */
+    margin: 150px auto; /* Centering the divs */
+    background-color: rgba(53, 94, 59, 0.9); /* Semi-transparent background */
+    padding: 20px; /* Add padding */
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.main-content {
+    width: 90%; /* Adjusted width as per your request */
+}
+
+.group-names {
+    width: 50%; /* Adjusted width as per your request */
+    text-align: center;
+}
+
+footer {
+    color: white;
+    background-color: #355E3B;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    bottom: 0;
+    position: fixed; /* Keep the footer at the bottom */
+}
+
+
+
+
+@media (max-width: 768px) {
+    main {
+        padding: 40px 10px; /* Reduced padding for smaller screens */
+    }
+
+    .title {
+        font-size: 32px; /* Smaller font size for smaller screens */
+    }
+
+    .subtext {
+        font-size: 16px; /* Smaller font size for smaller screens */
+    }
+
+    .description {
+        font-size: 18px; /* Smaller font size for smaller screens */
+    }
+
+    .main-content {
+        width: 100%; /* Full width on smaller screens */
+    }
+
+    .group-names {
+        width: 90%; /* Slightly wider on smaller screens for better readability */
+    }
+}
