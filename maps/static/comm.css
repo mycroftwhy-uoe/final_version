@@ -1,8 +1,9 @@
-/* Make the body cover the full page without margins */
+/* Base styles for responsive scaling */
 html, body {
     margin: 0;
     height: 100%;
     width: 100%;
+    font-family: 'Comfortaa', sans-serif;
 }
 
 /* Make the map fill the entire page */
@@ -24,10 +25,9 @@ html, body {
     color: black;
     border: 2px solid #355e3b;
     padding: 8px;
-    font-size: 16px;
+    font-size: 1rem;
     border-radius: 5px;
-    width: 70px;
-    height: 30px; 
+    width: auto;
     text-align: center;
     display: flex;
     justify-content: center;
@@ -46,7 +46,8 @@ html, body {
     position: absolute;
     top: 66px;
     right: 10px;
-    width: 200px;
+    width: 80%;
+    max-width: 200px;
     background-color: rgba(255, 255, 255, 0.8);
     border: 2px solid #355e3b;
     z-index: 1001;
@@ -58,7 +59,7 @@ html, body {
 /* Style for the header inside layer select tabs */
 #layer-select-tabs h3 {
     margin: 10px 0;
-    font-size: 16px;
+    font-size: 1rem;
     color: #355e3b;
 }
 
@@ -66,7 +67,7 @@ html, body {
 #layer-select-tabs button {
     font-family: 'Comfortaa', sans-serif !important;
     display: block;
-    width: 180px;
+    width: 90%;
     padding: 12px 20px;
     margin: 10px auto;
     background: #fff;
@@ -74,7 +75,7 @@ html, body {
     border-radius: 8px;
     text-align: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.3s ease;
     position: relative;
@@ -117,15 +118,15 @@ html, body {
 /* Style for the train button*/
 #train-button {
     position: absolute;
-    bottom: 50px;
-    left: 10px;
+    bottom: 10%;
+    left: 2%;
     z-index: 1001;
-    width: 80px;
-    height: 80px;
-    background-color: #FFFF; 
+    width: 60px;
+    height: 60px;
+    background-color: #ffff;
     color: white;
-    border: none; 
-    font-size: 36px;
+    border: none;
+    font-size: 2rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -142,10 +143,10 @@ html, body {
 /* Small text below the train button */
 #click-text {
     position: absolute;
-    bottom: 30px;
-    left: 10px;
+    bottom: 8%;
+    left: 2%;
     z-index: 1001;
-    font-size: 12px;
+    font-size: 0.8rem;
     color: #355e3b;
     text-align: center;
     width: 80px;
@@ -161,7 +162,7 @@ body {
 
 /* Style for headers */
 h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
     color: green;
     margin-top: 20px;
 }
@@ -175,16 +176,17 @@ h2 {
     z-index: 999;
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
-    width: 300px;
+    width: 90%;
+    max-width: 300px;
 }
 
 /* Style the form elements */
 textarea, input[type="text"], select {
-    width: 80%;
+    width: 90%;
     padding: 10px;
     border: 2px solid #355e3b;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 0.9rem;
     font-family: 'Comfortaa', sans-serif;
     margin-bottom: 20px;
     resize: vertical;
@@ -201,7 +203,7 @@ textarea, input[type="text"], select {
     color: white;
     border-radius: 4px;
     border: none;
-    font-size: 14px;
+    font-size: 0.9rem;
     text-align: center;
 }
 
@@ -229,40 +231,41 @@ textarea, input[type="text"], select {
 
 /* Style for small text displaying the selected file name */
 #fileName {
-    font-size: 12px;
+    font-size: 0.8rem;
     color: gray;
 }
 
 /* Custom active state colours for specific toggles */
 #toggleBoundary.active { background-color: #607D8B !important; }
-#toggleRoseburn.active { background-color: #4CAF50  !important; }
+#toggleRoseburn.active { background-color: #4CAF50 !important; }
 #toggleTelford.active { background-color: #4CAF50 !important; }
 #toggleFerryRd.active { background-color: #4CAF50 !important; }
-#toggleHawthorn.active { background-color: #4CAF50  !important; }
+#toggleHawthorn.active { background-color: #4CAF50 !important; }
 #toggleAddIcon.active { background-color: #E91E63 !important; }
 #toggleReportBirb.active { background-color: #9C27B0 !important; }
 #toggleReportAnimal.active { background-color: #2196f3 !important; }
 #toggleReportTree.active { background-color: #177c57 !important; }
 #toggleReportSafety.active { background-color: #FF9800 !important; }
-#toggleBirds.active { background-color: #9C27B0  !important; }
+#toggleBirds.active { background-color: #9C27B0 !important; }
 #toggleLitter.active { background-color: #E91E63 !important; }
-#toggleAnimals.active { background-color: #2196f3!important; }
+#toggleAnimals.active { background-color: #2196f3 !important; }
 #toggleTrees.active { background-color: #177c57 !important; }
-#toggleSafety.active { background-color: #FF9800!important; }
+#toggleSafety.active { background-color: #FF9800 !important; }
 #toggleAllOff.active { background-color: #e43a14 !important; }
 
 /* Info-box style, hidden by default */
 #info-box {
     display: none;
     position: absolute;
-    top: 85px;
-    left: 50px;
+    top: 10%;
+    left: 5%;
     z-index: 2001;
     background-color: white;
     border: 2px solid #355e3b;
     padding: 15px;
     border-radius: 8px;
-    width: 260px;
+    width: 80%;
+    max-width: 260px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -282,9 +285,16 @@ textarea, input[type="text"], select {
     color: black;
     border: 2px solid #355e3b;
     padding: 10px;
-    font-size: 16px;
+    font-size: 1rem;
     cursor: pointer;
     border-radius: 5px;
-    width: 80px;
-    height: 70px; 
+    width: auto;
+    height: auto; 
+}
+
+/* Additional media query for smaller screens */
+@media (max-width: 768px) {
+    #layer-select-tabs, #train-button, #info-box {
+        width: 95%;
+    }
 }
